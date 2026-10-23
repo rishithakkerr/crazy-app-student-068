@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Neon To-Do List</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --primary: #0ff;
+      --accent: #ff00ff;
+      --text: #e0e0e0;
+      --border: #222;
+      --shadow: rgba(0,255,255,0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    header {
+      width: 100%;
+      text-align: center;
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 420px;
+      background: #111;
+      border-radius: 12px;
+      box-shadow: 0 0 20px var(--shadow);
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: var(--primary);
+      text-shadow: 0 0 6px var(--primary);
+    }
+
+    #new-task {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #222;
+      color: var(--text);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      outline: none;
+      transition: background .3s;
+    }
+
+    #new-task:focus {
+      background: #333;
+    }
+
+    button {
+      background: var(--primary);
+      color: #000;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform .1s, box-shadow .2s;
+      box-shadow: 0 0 8px var(--primary);
+    }
+
+    button:hover {
+      box-shadow: 0 0 12px var(--primary), 0 0 20px var(--accent);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    ul {
+      list-style: none;
+      margin-top: 1rem;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1a1a1a;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 0.6rem;
+      transition: background .3s;
+    }
+
+    li.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    li:hover {
+      background: #222;
+    }
+
+    .del {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform .1s, opacity .2s;
+    }
+
+    .del:hover {
+      opacity: 0.85;
+    }
+
+    .del:active {
+      transform: scale(0.9);
+    }
+  </style>
+</head>
+
+<body>
+  <header>Created by Student #068</header>
+
+  <div class="app">
+    <h1>Neon To-Do List</h1>
+    <input id="new-task" type="text"
+           placeholder="What needs to be done?">
+    <button id="add-btn">Add Task</button>
+    <ul id="tasks"></ul>
+  </div>
+
+  <script>
+    const input = document.getElementById('new-task');
+    const addBtn = document.getElementById('add-btn');
+    const taskList = document.getElementById('tasks');
+
+    // Add task on button click or Enter key
+    function addTask() {
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      const li = document.createElement('li');
+
+      const span = document.createElement('span');
+      span.textContent = text;
+      span.style.cursor = 'pointer';
+
+      span.addEventListener('click', () => {
+        li.classList.toggle('completed');
+      });
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del';
+      delBtn.textContent = '✕';
+      delBtn.title = 'Delete';
+
+      delBtn.addEventListener('click', () => {
+        li.remove();
+      });
+
+      li.appendChild(span);
+      li.appendChild(delBtn);
+      taskList.appendChild(li);
+
+      input.value = '';
+      input.focus();
+    }
+
+    addBtn.addEventListener('click', addTask);
+
+    input.addEventListener('keypress', e => {
+      if (e.key === 'Enter') addTask();
+    });
+
+    // Console tests
+    const originalInputValue = input.value;
+    const originalTaskCount = taskList.children.length;
+
+    // Test 1: Normal input should add a task
+    input.value = 'Console test task';
+    addTask();
+    const testTask = Array.from(taskList.children).find(
+      li => li.querySelector('span')?.textContent === 'Console test task'
+    );
+    console.assert(!!testTask, 'Normal input should add a task');
+    if (testTask) testTask.remove();
+
+    // Test 2: Empty input should not add a task
+    input.value = '';
+    addTask();
+    console.assert(
+      taskList.children.length === originalTaskCount,
+      'Empty input should not add a task'
+    );
+
+    // Test 3: Whitespace-only input should not add a task
+    input.value = '   ';
+    addTask();
+    console.assert(
+      taskList.children.length === originalTaskCount,
+      'Whitespace-only input should not add a task'
+    );
+
+    // Restore the input after testing
+    input.value = originalInputValue;
+  </script>
+</body>
+</html>
